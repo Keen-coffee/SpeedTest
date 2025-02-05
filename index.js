@@ -6,35 +6,31 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.static('public'));
 
-app.get('/run_speedtest', (req, res) => {
+app.get('/run_speedtest', async (req, res) => {
   try {
     const speedTest = new SpeedTest();
 
-    // Use the 'onFinish' event handler
-    speedTest.on('done', (results) => {
-      // Log the results to inspect the object structure
-      console.log("Speedtest results:", results);
+    // Wait for the test results using the promise API
+    const results = await speedTest;
 
-      // Extract download, upload, and latency values
-      const downloadSpeed = results.getDownloadBandwidth() / 125000; // Convert from Bytes/s to Mbps
-      const uploadSpeed = results.getUploadBandwidth() / 125000; // Convert from Bytes/s to Mbps
-      const latency = results.getUnloadedLatency(); // Latency in milliseconds
+    // Log the results for debugging
+    console.log("Speedtest results:", results);
 
-      console.log("Download Speed:", downloadSpeed);
-      console.log("Upload Speed:", uploadSpeed);
-      console.log("Latency:", latency);
+    // Extract download, upload, and latency values
+    const downloadSpeed = results.getDownloadBandwidth() / 125000; // Convert from Bytes/s to Mbps
+    const uploadSpeed = results.getUploadBandwidth() / 125000; // Convert from Bytes/s to Mbps
+    const latency = results.getUnloadedLatency(); // Latency in milliseconds
 
-      // Send results to the client
-      res.json({
-        downloadSpeed: downloadSpeed.toFixed(2) + " Mbps",
-        uploadSpeed: uploadSpeed.toFixed(2) + " Mbps",
-        latency: latency.toFixed(2) + " ms"
-      });
+    console.log("Download Speed:", downloadSpeed);
+    console.log("Upload Speed:", uploadSpeed);
+    console.log("Latency:", latency);
+
+    // Send results to the client
+    res.json({
+      downloadSpeed: downloadSpeed.toFixed(2) + " Mbps",
+      uploadSpeed: uploadSpeed.toFixed(2) + " Mbps",
+      latency: latency.toFixed(2) + " ms"
     });
-
-    // Start the speedtest
-    speedTest.start();
-
   } catch (error) {
     console.error("Error during speedtest:", error);
     res.status(500).json({ error: error.toString() });
