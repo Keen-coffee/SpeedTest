@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speed Test Website</title>
+    <title>Speed Test Tool</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <h1>Cloudflare Speed Test</h1>
-    <button id="speedTestBtn">Test Speed</button>
-    <div id="result"></div>
-
+    <div class="container">
+        <h1>Bandwidth Test Tool</h1>
+        <form action="/test" method="post">
+            <button type="submit" class="btn">Test Bandwidth</button>
+        </form>
+        <div id="results"></div>
+    </div>
     <script src="/app.js"></script>
 </body>
 </html>
