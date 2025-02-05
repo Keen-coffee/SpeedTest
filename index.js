@@ -13,13 +13,13 @@ app.get('/run_speedtest', async (req, res) => {
     // Wait for the test results using the promise API
     const results = await speedTest;
 
-    // Log the results for debugging
+    // Log the entire results object to inspect its structure
     console.log("Speedtest results:", results);
 
-    // Extract download, upload, and latency values
-    const downloadSpeed = results.getDownloadBandwidth() / 125000; // Convert from Bytes/s to Mbps
-    const uploadSpeed = results.getUploadBandwidth() / 125000; // Convert from Bytes/s to Mbps
-    const latency = results.getUnloadedLatency(); // Latency in milliseconds
+    // Access the necessary results properties directly
+    const downloadSpeed = results.download.bandwidth / 125000; // Convert from Bytes/s to Mbps
+    const uploadSpeed = results.upload.bandwidth / 125000; // Convert from Bytes/s to Mbps
+    const latency = results.latency.toFixed(2); // Latency in milliseconds
 
     console.log("Download Speed:", downloadSpeed);
     console.log("Upload Speed:", uploadSpeed);
@@ -29,7 +29,7 @@ app.get('/run_speedtest', async (req, res) => {
     res.json({
       downloadSpeed: downloadSpeed.toFixed(2) + " Mbps",
       uploadSpeed: uploadSpeed.toFixed(2) + " Mbps",
-      latency: latency.toFixed(2) + " ms"
+      latency: latency + " ms"
     });
   } catch (error) {
     console.error("Error during speedtest:", error);
