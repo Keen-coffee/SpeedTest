@@ -16,7 +16,7 @@
         .then(response => response.json())
         .then(data => {
           if (data.result) {
-            document.getElementById('result').innerText = data.result;
+            document.getElementById('result').innerText = JSON.stringify(data.result, null, 2); // Pretty print JSON
           } else if (data.error) {
             document.getElementById('result').innerText = "Error: " + data.error;
           }
