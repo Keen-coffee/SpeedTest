@@ -10,11 +10,9 @@ app.get('/run_speedtest', (req, res) => {
   try {
     const speedTest = new SpeedTest();
 
-    // Logging before starting the speedtest
-    console.log("Starting the speedtest...");
-
-    speedTest.onFinish = results => {
-      // Log the entire results object to inspect the data structure
+    // Use the 'onFinish' event handler
+    speedTest.on('done', (results) => {
+      // Log the results to inspect the object structure
       console.log("Speedtest results:", results);
 
       // Extract download, upload, and latency values
@@ -32,7 +30,7 @@ app.get('/run_speedtest', (req, res) => {
         uploadSpeed: uploadSpeed.toFixed(2) + " Mbps",
         latency: latency.toFixed(2) + " ms"
       });
-    };
+    });
 
     // Start the speedtest
     speedTest.start();
