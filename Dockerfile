@@ -1,31 +1,18 @@
-# Stage 1: Build/Install Cloudflare speedtest CLI using Go.
-FROM golang:alpine AS builder
-# Install git if needed.
-RUN apk add --no-cache git
-# Install the Cloudflare speedtest binary.
-RUN go install github.com/cloudflare/speedtest@latest
-# The binary will be in /go/bin/speedtest
+# Use an official Node image.
+FROM node:18-alpine
 
-# Stage 2: Build the final image with Python and the speedtest binary.
-FROM python:3.9-slim
-# (Optional) Update packages and install CA certificates.
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
-
-# Set the working directory.
+# Set the working directory inside the container.
 WORKDIR /app
 
-# Copy the speedtest binary from the builder stage.
-COPY --from=builder /go/bin/speedtest /usr/local/bin/speedtest
+# Copy package files and install dependencies.
+COPY package*.json ./
+RUN npm install
 
-# Copy and install Python dependencies.
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the rest of the application code.
+# Copy the rest of the application source code.
 COPY . .
 
-# Expose port 5000.
-EXPOSE 5000
+# Expose the port on which the app will run.
+EXPOSE 3000
 
-# Run the Flask app.
-CMD ["python", "app.py"]
+# Start the Node/Express app.
+CMD ["npm", "start"]
