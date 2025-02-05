@@ -43,4 +43,6 @@ app.get('/run_speedtest', (req, res) => {
   }
 });
 
-app.listen(PO
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
