@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Test</title>
+</head>
+<body>
+    <h1>Cloudflare Speed Test</h1>
+    <button onclick="runSpeedTest()">Test</button>
+    <pre id="output"></pre>
+
+    <script>
+        async function runSpeedTest() {
+            document.getElementById('output').innerText = 'Running...';
+            try {
+                let response = await fetch('/run-speedtest');
+                let data = await response.json();
+                document.getElementById('output').innerText = JSON.stringify(JSON.parse(data.result), null, 2);
+            } catch (error) {
+                document.getElementById('output').innerText = 'Error running speed test';
+            }
+        }
+    </script>
+</body>
+</html>
