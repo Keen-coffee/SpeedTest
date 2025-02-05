@@ -1,28 +1,31 @@
-FROM python:3.9
+# Stage 1: Build/Install Cloudflare speedtest CLI using Go.
+FROM golang:alpine AS builder
+# Install git if needed.
+RUN apk add --no-cache git
+# Install the Cloudflare speedtest binary.
+RUN go install github.com/cloudflare/speedtest@latest
+# The binary will be in /go/bin/speedtest
 
-# Install dependencies
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-RUN curl -fsSL https://github.com/cloudflare/speedtest/releases/latest/download/speedtest-linux-amd64 -o /usr/local/bin/speedtest
-RUN chmod +x /usr/local/bin/speedtest
+# Stage 2: Build the final image with Python and the speedtest binary.
+FROM python:3.9-slim
+# (Optional) Update packages and install CA certificates.
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
-# Set up the working directory
+# Set the working directory.
 WORKDIR /app
 
-# Copy application files
-COPY requirements.txt .
+# Copy the speedtest binary from the builder stage.
+COPY --from=builder /go/bin/speedtest /usr/local/bin/speedtest
+
+# Copy and install Python dependencies.
+COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Flask and CORS
-RUN pip install flask flask-cors
-
-# Copy application files
+# Copy the rest of the application code.
 COPY . .
 
-# Copy frontend files
-COPY index.html /app/templates/index.html
-
-# Expose port
+# Expose port 5000.
 EXPOSE 5000
 
-# Run the app
+# Run the Flask app.
 CMD ["python", "app.py"]

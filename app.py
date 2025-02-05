@@ -1,15 +1,24 @@
-from flask import Flask, jsonify
+from flask import Flask, render_template, jsonify
 import subprocess
 
 app = Flask(__name__)
 
-@app.route('/run-speedtest', methods=['GET'])
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/run_speedtest')
 def run_speedtest():
     try:
-        result = subprocess.run(["/usr/local/bin/speedtest", "--json"], capture_output=True, text=True, check=True)
-        return jsonify(result=result.stdout)
-    except subprocess.CalledProcessError as e:
-        return jsonify(error="Failed to run speed test", details=str(e)), 500
+        # Run the Cloudflare speedtest command.
+        # Adjust the timeout if needed.
+        result = subprocess.run(['speedtest'], capture_output=True, text=True, timeout=60)
+        # If speedtest exits with 0 return the stdout, else stderr.
+        output = result.stdout if result.returncode == 0 else result.stderr
+    except Exception as e:
+        output = str(e)
+    return jsonify({'result': output})
 
 if __name__ == '__main__':
+    # Listen on all interfaces, port 5000.
     app.run(host='0.0.0.0', port=5000)

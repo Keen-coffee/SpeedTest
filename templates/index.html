@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Cloudflare Speedtest</title>
+</head>
+<body>
+  <h1>Cloudflare Speedtest</h1>
+  <button id="testButton">Test</button>
+  <pre id="result"></pre>
+
+  <script>
+    document.getElementById('testButton').addEventListener('click', function() {
+      document.getElementById('result').innerText = "Running speedtest...";
+      fetch('/run_speedtest')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('result').innerText = data.result;
+        })
+        .catch(error => {
+          document.getElementById('result').innerText = 'Error: ' + error;
+        });
+    });
+  </script>
+</body>
+</html>
