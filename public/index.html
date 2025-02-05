@@ -7,7 +7,7 @@
 <body>
   <h1>Cloudflare Speedtest</h1>
   <button id="testButton">Test</button>
-  <pre id="result"></pre>
+  <div id="result"></div>
 
   <script>
     document.getElementById('testButton').addEventListener('click', function() {
@@ -15,8 +15,12 @@
       fetch('/run_speedtest')
         .then(response => response.json())
         .then(data => {
-          if (data.result) {
-            document.getElementById('result').innerText = JSON.stringify(data.result, null, 2); // Pretty print JSON
+          if (data.downloadSpeed && data.uploadSpeed && data.latency) {
+            document.getElementById('result').innerHTML = `
+              <p>Download Speed: ${data.downloadSpeed} Mbps</p>
+              <p>Upload Speed: ${data.uploadSpeed} Mbps</p>
+              <p>Latency: ${data.latency} ms</p>
+            `;
           } else if (data.error) {
             document.getElementById('result').innerText = "Error: " + data.error;
           }
