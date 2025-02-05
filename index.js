@@ -11,10 +11,21 @@ app.get('/run_speedtest', (req, res) => {
       const speedTest = new SpeedTest();
   
       speedTest.onFinish = results => {
-        console.log("Full Speedtest Results:", results);
-  
-        res.json(results); // Temporarily send full results to inspect structure
+        try {
+          const downloadSpeed = results.getDownloadBandwidth() / 125000; // Convert from Bytes/s to Mbps
+          const uploadSpeed = results.getUploadBandwidth() / 125000; // Convert from Bytes/s to Mbps
+          const latency = results.getUnloadedLatency(); // Latency in milliseconds
+      
+          res.json({
+            downloadSpeed: downloadSpeed.toFixed(2) + " Mbps",
+            uploadSpeed: uploadSpeed.toFixed(2) + " Mbps",
+            latency: latency.toFixed(2) + " ms"
+          });
+        } catch (error) {
+          res.status(500).json({ error: error.toString() });
+        }
       };
+      
   
     } catch (error) {
       res.status(500).json({ error: error.toString() });
