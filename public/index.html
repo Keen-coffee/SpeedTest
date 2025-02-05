@@ -1,33 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Cloudflare Speedtest</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Test Website</title>
 </head>
 <body>
-  <h1>Cloudflare Speedtest</h1>
-  <button id="testButton">Test</button>
-  <pre id="result"></pre>
+    <h1>Cloudflare Speed Test</h1>
+    <button id="speedTestBtn">Test Speed</button>
+    <div id="result"></div>
 
-  <script>
-    document.getElementById('testButton').addEventListener('click', function() {
-      document.getElementById('result').innerText = "Running speedtest...";
-      fetch('/run_speedtest')
-        .then(response => response.json())
-        .then(data => {
-          if (data.downloadSpeed && data.uploadSpeed && data.latency) {
-            document.getElementById('result').innerText = `Download: ${data.downloadSpeed}\nUpload: ${data.uploadSpeed}\nLatency: ${data.latency}`;
-          } else if (data.error) {
-            document.getElementById('result').innerText = "Error: " + data.error;
-          }
-        })
-        .catch(error => {
-          document.getElementById('result').innerText = 'Error: ' + error;
-        });
-    });
-  </script>
-  
-  
-  
+    <script src="/app.js"></script>
 </body>
 </html>
