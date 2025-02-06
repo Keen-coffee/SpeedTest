@@ -13,17 +13,14 @@
         <div class="text-center mt-5">
             <h1>Speedtest</h1>
 
-            <!-- Password input field -->
-            <div id="password-section">
-                <input type="password" id="password" class="form-control" placeholder="Enter password" style="width: 300px; margin-bottom: 15px;">
-                <button id="test-button" class="btn btn-primary btn-lg">Run Speedtest</button>
-            </div>
-
             <!-- Loading spinner -->
             <div id="loading" class="loading-icon mt-3" style="display: none;">Running Test...</div>
 
             <!-- Displaying results -->
             <div id="result" class="mt-4"></div>
+
+            <!-- Run Speedtest Button -->
+            <button id="test-button" class="btn btn-primary btn-lg">Run Speedtest</button>
         </div>
     </div>
 
@@ -34,26 +31,13 @@
 
     <script>
         document.getElementById('test-button').addEventListener('click', function() {
-            // Get the password entered by the user
-            const password = document.getElementById('password').value;
-
-            // Check if password is entered
-            if (!password) {
-                alert('Please enter the password.');
-                return;
-            }
-
             // Show loading icon while test is running
             document.getElementById('loading').style.display = 'block';
             document.getElementById('result').innerHTML = '';  // Clear previous result
 
-            // Send the password and request to run the speedtest
+            // Send the request to run the speedtest
             fetch('/run-speedtest', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `password=${encodeURIComponent(password)}`
+                method: 'POST'
             })
             .then(response => response.json())
             .then(data => {
