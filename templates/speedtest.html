@@ -12,8 +12,17 @@
     <div class="container">
         <div class="text-center mt-5">
             <h1>Speedtest</h1>
-            <button id="test-button" class="btn btn-primary btn-lg mt-3">Run Speedtest</button>
+
+            <!-- Password input field -->
+            <div id="password-section">
+                <input type="password" id="password" class="form-control" placeholder="Enter password" style="width: 300px; margin-bottom: 15px;">
+                <button id="test-button" class="btn btn-primary btn-lg">Run Speedtest</button>
+            </div>
+
+            <!-- Loading spinner -->
             <div id="loading" class="loading-icon mt-3" style="display: none;">Running Test...</div>
+
+            <!-- Displaying results -->
             <div id="result" class="mt-4"></div>
         </div>
     </div>
@@ -25,44 +34,59 @@
 
     <script>
         document.getElementById('test-button').addEventListener('click', function() {
+            // Get the password entered by the user
+            const password = document.getElementById('password').value;
+
+            // Check if password is entered
+            if (!password) {
+                alert('Please enter the password.');
+                return;
+            }
+
             // Show loading icon while test is running
             document.getElementById('loading').style.display = 'block';
             document.getElementById('result').innerHTML = '';  // Clear previous result
 
-            // Send request to run the speedtest
-            fetch('/run-speedtest')
-                .then(response => response.json())
-                .then(data => {
-                    // Hide loading icon once test is complete
-                    document.getElementById('loading').style.display = 'none';
+            // Send the password and request to run the speedtest
+            fetch('/run-speedtest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `password=${encodeURIComponent(password)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading icon once test is complete
+                document.getElementById('loading').style.display = 'none';
 
-                    // Check for error in the response
-                    if (data.error) {
-                        document.getElementById('result').innerText = 'Error: ' + data.error;
-                    } else {
-                        // Format and display the results
-                        const resultHtml = `
-                            <div class="card text-white bg-success mb-3">
-                                <div class="card-header">Test Results</div>
-                                <div class="card-body">
-                                    <h5 class="card-title">Download Speed</h5>
-                                    <p class="card-text">${(data.download / 1e6).toFixed(2)} Mbps</p>
-                                    <h5 class="card-title">Upload Speed</h5>
-                                    <p class="card-text">${(data.upload / 1e6).toFixed(2)} Mbps</p>
-                                    <h5 class="card-title">Ping</h5>
-                                    <p class="card-text">${data.ping} ms</p>
-                                    <h5 class="card-title">ISP</h5>
-                                    <p class="card-text">${data.client.isp}</p>
-                                </div>
+                // Check for error in the response
+                if (data.error) {
+                    document.getElementById('result').innerText = 'Error: ' + data.error;
+                } else {
+                    // Format and display the results
+                    const resultHtml = `
+                        <div class="card text-white bg-success mb-3">
+                            <div class="card-header">Test Results</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Download Speed</h5>
+                                <p class="card-text">${(data.download / 1e6).toFixed(2)} Mbps</p>
+                                <h5 class="card-title">Upload Speed</h5>
+                                <p class="card-text">${(data.upload / 1e6).toFixed(2)} Mbps</p>
+                                <h5 class="card-title">Ping</h5>
+                                <p class="card-text">${data.ping} ms</p>
+                                <h5 class="card-title">ISP</h5>
+                                <p class="card-text">${data.client.isp}</p>
                             </div>
-                        `;
-                        document.getElementById('result').innerHTML = resultHtml;
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('result').innerText = 'Error fetching speedtest data: ' + error.message;
-                });
+                        </div>
+                    `;
+                    document.getElementById('result').innerHTML = resultHtml;
+                }
+            })
+            .catch(error => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('result').innerText = 'Error fetching speedtest data: ' + error.message;
+            });
         });
     </script>
 </body>
