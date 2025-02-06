@@ -2,17 +2,13 @@
 .loading-icon {
     font-size: 24px;
     font-weight: bold;
-    color: #333;
+    color: #007bff;
     text-align: center;
     padding: 20px;
+    animation: spinning 1s infinite linear;
 }
 
-/* Add CSS for a spinning effect (optional) */
-.loading-icon::after {
-    content: '...';
-    animation: spinning 1s infinite;
-}
-
+/* Add CSS for a spinning effect */
 @keyframes spinning {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

@@ -4,12 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Speedtest</title>
+    <!-- Include Bootstrap via CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <button id="test-button">Run Speedtest</button>
-    <div id="result"></div>
-    <div id="loading" class="loading-icon" style="display: none;">Running Test...</div>
+    <div class="container">
+        <div class="text-center mt-5">
+            <h1>Speedtest</h1>
+            <button id="test-button" class="btn btn-primary btn-lg mt-3">Run Speedtest</button>
+            <div id="loading" class="loading-icon mt-3" style="display: none;">Running Test...</div>
+            <div id="result" class="mt-4"></div>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
         document.getElementById('test-button').addEventListener('click', function() {
@@ -30,12 +42,19 @@
                     } else {
                         // Format and display the results
                         const resultHtml = `
-                            <h3>Speedtest Results</h3>
-                            <p><strong>Download Speed:</strong> ${(data.download / 1e6).toFixed(2)} Mbps</p>
-                            <p><strong>Upload Speed:</strong> ${(data.upload / 1e6).toFixed(2)} Mbps</p>
-                            <p><strong>Ping:</strong> ${data.ping} ms</p>
-                            <p><strong>Server:</strong> ${data.server.name} (${data.server.country})</p>
-                            <p><strong>Location:</strong> ${data.client.lat}, ${data.client.lon}</p>
+                            <div class="card text-white bg-success mb-3">
+                                <div class="card-header">Test Results</div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Download Speed</h5>
+                                    <p class="card-text">${(data.download / 1e6).toFixed(2)} Mbps</p>
+                                    <h5 class="card-title">Upload Speed</h5>
+                                    <p class="card-text">${(data.upload / 1e6).toFixed(2)} Mbps</p>
+                                    <h5 class="card-title">Ping</h5>
+                                    <p class="card-text">${data.ping} ms</p>
+                                    <h5 class="card-title">ISP</h5>
+                                    <p class="card-text">${data.client.isp}</p>
+                                </div>
+                            </div>
                         `;
                         document.getElementById('result').innerHTML = resultHtml;
                     }
