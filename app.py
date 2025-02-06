@@ -33,12 +33,27 @@ def index():
 def run_speedtest():
     try:
         # Run the speedtest-cli command with --json flag to get JSON output
-        result = subprocess.run(['speedtest-cli', '--json'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result = subprocess.run(['speedtest-cli', '--json'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+
+        # Capture the output from the command
         output = result.stdout.decode('utf-8')
-        # Parse the JSON result
-        return jsonify(json.loads(output))
+
+        # Check if the output is empty
+        if not output:
+            return jsonify({'error': 'No output from speedtest-cli'}), 500
+
+        # Attempt to parse the JSON result
+        try:
+            speedtest_data = json.loads(output)
+            return jsonify(speedtest_data)
+        except json.JSONDecodeError as e:
+            return jsonify({'error': f"Error decoding JSON: {e}"}), 500
+
+    except subprocess.CalledProcessError as e:
+        return jsonify({'error': f"Error running speedtest-cli: {e.stderr.decode('utf-8')}"})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
