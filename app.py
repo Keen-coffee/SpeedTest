@@ -30,4 +30,5 @@ def run_speedtest():
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Set host to '0.0.0.0' and specify a port (default is 5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
