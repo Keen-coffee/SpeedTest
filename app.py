@@ -1,12 +1,13 @@
+import os
 from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 import subprocess
 import json
 
 app = Flask(__name__)
 
-# Set a password for the speedtest
-PASSWORD = "yourpassword"  # Replace this with your desired password
-app.secret_key = "your_secret_key"  # Needed for session management
+# Set the password from an environment variable, with a fallback if not set
+PASSWORD = os.getenv('SPEEDTEST_PASSWORD', 'defaultpassword')  # Replace 'defaultpassword' with a fallback value
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'your_secret_key')  # Secret key for session
 
 @app.route('/')
 def index():
