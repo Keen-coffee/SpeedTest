@@ -1,27 +1,19 @@
-FROM alpine:3.19
+# Use Python 3 as the base image
+FROM python:3.9-slim
 
+# Set the working directory
 WORKDIR /app
 
 # Install dependencies
-RUN npm install --production express speedtest-cli lodash@4.x serve-static express-fs body-parser
+RUN apt-get update && apt-get install -y \
+    curl \
+    && pip install --no-cache-dir speedtest-cli Flask
 
-# Copy only what's needed
-COPY package.json ./
-COPY public/ ./public
-COPY templates/ ./templates
+# Copy the app files into the container
+COPY . /app
 
-# Use multi-stage to reduce image size
-FROM alpine:3.19
-WORKDIR /app
+# Expose the port for the web server
+EXPOSE 5000
 
-# Install runtime dependencies
-RUN apt-get update && apt-get install -y nodejs
-
-# Copy everything into the final image
-COPY package*.json .
-COPY public/ ./public
-COPY templates/ ./templates
-
-EXPOSE 3000
-
-CMD ["node", "server.js"]
+# Command to run the Flask app
+CMD ["python", "app.py"]
